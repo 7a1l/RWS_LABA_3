@@ -25,7 +25,6 @@ RECAPTCHA_SECRET_KEY = os.getenv("RECAPTCHA_SECRET_KEY", "YOUR_SECRET_KEY")
 
 
 def adjust_channel_intensity(image: Image.Image, r_mult: float, g_mult: float, b_mult: float) -> Image.Image:
-    """Изменение интенсивности цветовых каналов R, G, B по заданным коэффициентам"""
     if r_mult < 0 or g_mult < 0 or b_mult < 0:
         raise ValueError("Коэффициенты интенсивности не могут быть отрицательными")
 
@@ -40,7 +39,6 @@ def adjust_channel_intensity(image: Image.Image, r_mult: float, g_mult: float, b
 
 
 def save_color_histogram(image: Image.Image, save_path: str, title_prefix: str):
-    """Построение и сохранение гистограмм распределения цветов по каналам R, G, B"""
     img_array = np.array(image.convert("RGB"))
     fig, axes = plt.subplots(1, 3, figsize=(12, 3.5))
 
@@ -60,7 +58,6 @@ def save_color_histogram(image: Image.Image, save_path: str, title_prefix: str):
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    """Отображение главной страницы с формой ввода параметров"""
     return templates.TemplateResponse(
         request=request,
         name="index.html",
@@ -80,7 +77,6 @@ async def process_image(
     file: UploadFile = File(...),
     resp: str = Form(default="")
 ):
-    """Обработка POST-запроса: проверка капчи, изменение интенсивности каналов и построение гистограмм"""
     if RECAPTCHA_SECRET_KEY and RECAPTCHA_SECRET_KEY != "YOUR_SECRET_KEY":
         try:
             payload = {"secret": RECAPTCHA_SECRET_KEY, "response": resp}
@@ -102,7 +98,6 @@ async def process_image(
     contents = await file.read()
     orig_img = Image.open(io.BytesIO(contents)).convert("RGB")
 
-    # Изменяем интенсивность цветовых карт R, G, B
     processed_img = adjust_channel_intensity(orig_img, r_mult, g_mult, b_mult)
 
     file_hash = hashlib.sha256(
