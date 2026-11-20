@@ -135,8 +135,3 @@ async def process_image(
             "hist_proc_url": f"/static/{hist_proc_filename}",
         }
     )
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
